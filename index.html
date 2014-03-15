@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="es">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>MongoDB, porque mola!</title>
+
+		<meta name="description" content="MongoDB, porque mola">
+		<meta name="author" content="David Perez Zaba">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+                
+				<section>
+					<!-- <h1>MongoDB</h1> -->
+                    <img src="img/mongodb.png"  class="no-border">
+                    <h3>Porque mola mucho</h3>
+					<p>
+						<small>by <a href="http://www.dpzaba.com">David Zaba</a> </small>
+					</p>
+                    <p id="emilio">dpzaba at gmail dot com</p>
+                    <p class="pull-left">dpzaba.com</p>
+                    <p class="pull-right"><small>
+                        CiudadReal-rb
+                        <br>
+                        Agile-CR
+                    </small></p>
+                    
+				</section>
+                
+                <section data-background="img/toledo.jpg" class="black-text top-position">
+                    <h2>Hola!</h2>
+                    <ul class="no-list-style">
+                        <li>David Pérez Zaba</li>
+                        <li>Ingeniero en Informática</li>
+                        <li>UCLM -> Bizneo -> ?</li>
+                    </ul>
+                </section>
+                
+				<section>
+					<h2>¿Qué es?</h2>
+					<ul>
+						<li>NoSQL <br><small>Open Source & C++</small></li>
+						<li>Documentos <br><small>JSON* estructura libre -> BSON</small></li>
+						<li>Índices</li>
+                        <li>Replicación y alta disponibilidad</li>
+                        <li>Auto-Sharding</li>
+						<li>Map/Reduce</li>
+						<li>GridFS ( > 16 MB)</li>
+						<li>$oporte ...</li>
+					</ul>
+				</section>
+
+                <section>
+					<h2>¿Dónde estamos?</h2>
+					<img src="img/mongodb-chart.png">
+				</section>
+                
+                 <section>
+					<h2>Conceptos</h2>
+					<ol>
+                        <li>Database</li>
+                        <li>Collection</li>
+                        <li>Document</li>
+                        <li>Field</li>
+                        <li>Index</li>
+                        <li>Aggregation pipeline</li>
+                    </ol>
+				</section>
+                
+                <section>
+					<h2>¿Qué le falta?</h2>
+					<ol>
+                        <li>Joins</li>
+                        <li>Integridad referencial</li>
+                        <li>Transacciones</li>
+                        <li>...</li>
+                    </ol>
+				</section>
+
+                <section>
+                    <h3>Code inside!</h3>
+                    <img src="img/sparta.jpg">
+                </section>
+                
+                <section>
+					<h2>Install</h2>
+					<pre><code data-trim contenteditable class="language-bash">
+sudo apt-get install mongodb
+
+# official repositories:
+# mongodb-10gen
+                    </code></pre>
+<pre><code data-trim contenteditable class="language-bash">
+david:~$ mongo
+MongoDB shell version: 2.4.9
+connecting to: test
+>
+                    </code></pre>
+                    <a href="http://try.mongodb.org">try.mongodb.org</a>
+				</section>
+                
+                <section>
+					<h2>JSON</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+{
+  _id: ObjectID("509a8fb2f3f4948bd2f983a0"), 
+  // 12 bytes: timestamp + m_id + p_id + counter
+  name: "David",
+  age: 24,
+  status: "A"
+}
+					</code></pre>
+				</section>
+               
+                <section>
+					<h2>Insert</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+db.users.insert( {
+    name: "David",
+    age: 24,
+    status: "A"
+ } )
+
+db.users.save( {
+    name: "David",
+    age: 24,
+    status: "A"
+ } )
+					</code></pre>
+				</section>
+
+                
+                <section>
+					<h2>Select</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+db.users.find(
+    { status: "A" },
+    { name: 1, status: 1, _id: 0 }
+)
+
+db.users.find(
+    { name: /David.*/i }
+)
+					</code></pre>
+                    
+				</section>
+                
+                <section>
+					<h2>Select II</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+db.users.find(
+    { age: { $gt: 21 } }
+)
+
+db.users.find(
+    { $or: [ { status: "A" }, { age: 24 } ] }
+)
+					</code></pre>
+				</section>
+                
+                <section>
+					<h2>Update</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+db.users.update(
+   { age: { $gt: 25 } },
+   { $set: { status: "C" } },
+   { upsert: true, multi: true }
+)
+
+db.users.save( {
+    _id: 7,
+    user_id: "David",
+    age: 24,
+    status: "A"
+ } )
+					</code></pre>
+				</section>
+                
+                <section>
+					<h2>Delete</h2>
+					<pre><code data-trim contenteditable class="language-javascript">
+db.users.remove( { status: "D" }, true ) //justOne
+					</code></pre>
+				</section>
+                
+                <section>
+					<h2>Asociaciones</h2>
+                    <img src="img/association.png" class="no-border">
+				</section>
+                
+                <section>
+					<h3>Reference</h3>
+					<pre><code data-trim contenteditable class="language-javascript">
+/* Exam */
+{
+    _id: 1,
+    subject: "Redes",
+    questions: [ 5, 7, 9]
+}
+
+/* Question */
+{
+    _id: 5,
+    puctuation: 1.5,
+    question_text: "Diferencias entre TCP y UDP"
+}
+                    </code></pre>
+				</section>
+                
+                <section>
+					<h3>Embedded</h3>
+					<pre><code data-trim contenteditable class="language-javascript">
+/* Exam */
+{
+    _id: 1,
+    subject: "Redes",
+    questions: [
+        { 
+          punctuation: 1.5,
+          question_text: "Diferencias entre TCP y UDP" 
+        },
+        { 
+          punctuation: 1,
+          question_text: "¿Qué es un enrutador IP?" 
+        },
+        ...
+    ]
+}
+                    </code></pre>
+				</section>
+                
+                <section>
+					<h3>¿Cuál utilizar?</h3>
+					<ul>
+                    <li>Depende de tu modelado de datos</li>
+                    <li>¿?</li>
+                        <ul class="no-list-style">
+                            <li>¿Acceder a cada modelo?</li>
+                            <!-- <li>Qué tamaño tienen?</li> -->
+                            <li>¿Relaciones recíprocas entre modelos?</li>
+                            <li>¿Jerarquía entre modelos?</li>
+                        </ul>
+                    </ul>
+				</section>
+
+                
+                <section>
+					<h2>Backups</h2>
+                    <ul>
+                        <li>MMS</li>
+                        <li>Filesystem Snapshots</li>
+                        <li>mongodump & mongorestore</li>
+                        <li>mongoimport & mongoexport</li>
+                    </ul>
+				</section>
+                
+                <section>
+					<h2>Otras características</h2>
+					<ul>
+                        <li>Gestión usuarios básica</li>
+                        <li>Índices</li>
+                        <ul class="no-list-style">
+                            <li>Simples</li>
+                            <li>Compuestos</li>
+                            <li>Multikey ~ Array</li>
+                            <li>Hash</li>
+                            <li>Geoespacial</li>
+                            <li>Texto</li>
+                            <small>Unique, Sparse, TTL</small>
+                        </ul>
+                        <li>Compresión datos</li>
+                    </ul>
+				</section>
+                       
+
+                <section>
+                <h2>Ruby + MongoDB</h2>
+                <ol>
+                    <li>Ruby driver</li>
+                    <li>MongoId</li>
+                    <li>MongoMapper</li>
+                    <li>...</li>
+                </ol>
+                </section>
+                
+                <section>
+                <h2>Ruby Driver</h2>
+                <pre><code data-trim contenteditable class="language-ruby">
+# Conex ...
+# collection users
+users = db["users"] 
+
+users.count
+
+users.insert(:name => "David")
+users.find({_id: 7}, :fields => ["name", "email"])
+
+users.find.each { |user| puts user.inspect }
+
+
+users.update({_id: 7}, {:$set => { :name => "Zaba" }})
+
+users.remove(:name => "David")
+                </code></pre>
+                </section>
+                <!-- 
+users.find.each_slice(10) do |slice|
+  puts slice.inspect
+end -->
+                
+                <section>
+					<h2>MongoMapper</h2>
+					<pre><code data-trim contenteditable class="language-ruby">
+class User
+  include MongoMapper::Document
+
+  key :name, String
+  key :age,  Integer
+end
+
+# 
+User.create(:name => "David")
+User.where(id: 7).fields(:name,:email)
+					</code></pre>
+				</section>  
+                
+                <section>
+					<h2>MongoMapper</h2>
+					<pre><code data-trim contenteditable class="language-ruby">
+class Exam
+  include MongoMapper::Document
+
+  key :subject, String
+  
+  many :questions
+end
+
+class Question
+  include MongoMapper::Document
+  # include MongoMapper::EmbeddedDocument  
+
+  key :question_text, String
+  key :punctuation,   Integer
+  
+  belongs_to :exam
+end
+					</code></pre>
+				</section>  
+                
+                <section>
+					<h2>MongoMapper <br>vs.<br> MongoId</h2>
+                    <ul>
+                        <li>MongoId</li>
+                        <ul class="no-list-style">
+                            <li>Soporte gemas</li>
+                            <li>Comunidad (5,8k vs. 1,8k commits)</li>
+                            <li>+ Funcionalidades implementadas</li>
+                            <li>Menos fallos</li>
+                        </ul>
+                    <li>MongoMapper</li>
+                        <ul class="no-list-style">
+                            <li>~ ActiveRecord</li>
+                            <li>Más simple</li>
+                        </ul>
+                    </ul>
+				</section> 
+         
+                <section>
+                <h2>Secretos oscuros</h2>
+                <ul>
+                    <li>SSOO 32bits -> Tamaño max: 2 GBytes</li>
+                    <li>Preallocate: 2<sup>n</sup> [64MB - 2GB]</li>
+                    <li>Tamaño en disco se dispara con índices</li>
+                    <li>BSON -> tamaño varía: nombres de campos y mayúsculas</li>
+                </ul>    
+                </section>
+                
+                <section>
+                <h2>Secretos oscuros II</h2>
+                <ul>
+                    <li>MongoShell: Ctrl+C</li>
+                    <li>Wrong UTF-8: ordenación</li>
+                    <li>Full-text: beta</li>
+                    <li>Skip: ¡secuencial!</li>
+                    <li>Map/Reduce: Js,  1 hilo</li>
+                </ul>    
+                </section>
+                
+                    
+                <section>
+                <h2>Consejos</h2>
+                <ul>
+                    <li>¿Lo necesitas? -> SQL + MongoDB</li>
+                    <li>Índices + "working set" en RAM</li>
+                    <li>Refactorizaciones son caras y peligrosas</li>
+                    <li>Sharding!! SSD + CPU</li>
+                    <li>Nombres de campos cortos y minúsculas</li>
+                </ul>
+                </section>
+                
+                <section>
+                <h2>Consejos II</h2>
+                <ul>
+                    <li>S.O. 64 bits</li>
+                    <li>Búsquedas
+                        <ol>
+                            <li>Find</li>
+                            <li>Aggregation Framework</li>
+                            <li>Map/Reduce</li>
+                        </ol>
+                    </li>
+                    <li>Denormalizar + duplica datos < rendimiento </li>
+                </ul>
+                </section>
+                
+				<section>
+					<h2>Links</h2>
+					<ul>
+						<li><a href="http://mongodb.org">MongoDB.org</a></li>
+                        <li><a href="https://education.mongodb.com/">MongoDB University </a></li>
+                        <li><a href="http://docs.mongodb.org/ecosystem/drivers/ruby-resources/#ruby-external-resources">Ruby + MongoDB</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js">MongoMapper</a></li>
+						<li><a href="http://twitter.com/hakimel">MongoId</a></li>
+                        
+					</ul>
+				</section>
+
+				<section>
+					<h1>THE END</h1>
+					<h3>Gracias!</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+                width: 1200,
+                //height: 800,
+
+                // Factor of the display size that should remain empty around the content
+                //margin: 0.1,
+
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+			
+      function show_my_emilio(){
+        document.getElementById("emilio").innerHTML = "dpzaba" + "@" + "gm" + "ail.com"
+      }
+      window.onload = show_my_emilio;
+		</script>
+
+	</body>
+</html>
