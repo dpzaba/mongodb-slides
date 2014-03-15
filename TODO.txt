@@ -1,0 +1,14 @@
+I would like to add information about:
+
+- Journaling: 
+	- http://blog.mongodb.org/post/33700094220/how-mongodbs-journaling-works
+	- http://docs.mongodb.org/manual/core/journaling/
+
+- Sharding:
+	- docs.mongodb.org/manual/sharding/
+
+- Replication:
+	- docs.mongodb.org/manual/replication/
+
+- Aggregation Framework:
+	- docs.mongodb.org/manual/aggregation/ 
